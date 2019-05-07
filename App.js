@@ -1,10 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
+
 
 import React, {Component} from 'react'
 import { createStore, applyMiddleware, combineReducers } from 'redux'
@@ -18,8 +12,10 @@ import Reaction from 'components/Reaction'
 import Settings from 'components/Settings'
 
 import CanvasContainer from 'containers/CanvasContainer'
+import SettingsContainer from 'containers/SettingsContainer'
 
 import doodlePaint from './src/reducers'
+import { SET_SESSION } from './src/actions'
 
 const store = createStore(doodlePaint)
 
@@ -35,63 +31,7 @@ export default class App extends Component {
       x: 0,
       y: 0
     }
-    this.socket = SocketIOClient('http://192.168.50.217:5000');
-    this.socket.on('connect', () => console.log('connected'))
-    console.log(this.socket.connected)
-    // this._panResponder = PanResponder.create({
-    //   onStartShouldSetPanResponder: (evt, gs) => true,
-    //   onMoveShouldSetPanResponder: (evt, gs) => true,
-    //   onPanResponderGrant: (evt, gs) => this.onResponderGrant(evt, gs),
-    //   onPanResponderMove: (evt, gs) => this.onResponderMove(evt, gs),
-    //   onPanResponderRelease: (evt, gs) => this.onResponderRelease(evt, gs)
-    // });
   }
-
-  // onTouch(evt) {
-  //   let [x, y] = [evt.nativeEvent.pageX, evt.nativeEvent.pageY];
-  //   const newCurrentPoints = this.state.currentPoints;
-  //   newCurrentPoints.push({ x, y });
-
-  //   // console.log('entro')
-  //   this.setState({
-  //     currentPoints: newCurrentPoints,
-  //     x: x,
-  //     y: y
-  //   });
-  // }
-
-  // onResponderGrant(evt) {
-  //   this.onTouch(evt);
-  // }
-
-  // onResponderMove(evt) {
-  //   this.onTouch(evt);
-  // }
-
-  // onResponderRelease() {
-  //   console.log('Fin');
-  //   const { reaction, currentPoints, pathCount } = this.state;
-  //   const newPaths = this.state.donePaths;
-
-  //   console.log(newPaths);
-  //   if (currentPoints.length > 0) {
-  //     newPaths.push(
-  //       <Path
-  //         key={pathCount}
-  //         stroke="red"
-  //         d={reaction.pointsToSvg(currentPoints)}
-  //         fill="none"
-  //       />
-  //     );
-  //     console.log('entro');
-  //   }
-  //   this.setState({
-  //     donePaths: newPaths,
-  //     currentPoints: [],
-  //     pathCount: pathCount + 1
-  //   });
-
-  // }
 
   setCoordinates = (x, y) => {
     this.setState({x, y});
@@ -104,6 +44,34 @@ export default class App extends Component {
 
   test(evt) {
     console.log('funciona')
+  }
+
+  componentDidMount() {
+    fetch('http://127.0.0.1:4000/init', {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        size: [Dimensions.get('window').width - 20, Dimensions.get('window').width - 20]
+      })
+    })
+    .then(res => {
+      console.log(res.headers.get('set-cookie'))
+      // store.dispatch({
+      //   type: SET_SESSION,
+      //   session: res.headers.get('set-cookie')
+      // })
+      return res.json()
+    })
+    .then(res => {
+      console.log(res)
+    })
+    .catch(error => {
+      console.log(error.message)
+    })
   }
 
   render() {
@@ -141,7 +109,7 @@ export default class App extends Component {
 
           <View style={{ minHeight: 200 }}>
             <Button title="message" onPress={this.sendMessage} />
-            <Settings />
+            <SettingsContainer />
             <Text style={styles.instructions}>{x}</Text>
             <Text style={styles.instructions}>{y}</Text>
           </View>

@@ -6,7 +6,8 @@ import { Path } from 'react-native-svg'
 import {
   ADD_PATH,
   ADD_POINT,
-  CLEAR_PATH
+  CLEAR_PATH,
+  SET_SESSION
 } from './actions'
 
 import {
@@ -18,6 +19,7 @@ function paths(
     pathCount: 0,
     completed: [],  
     current: [],
+    past: [],
     offsetX: 10,
     offsetY: 10,
     color: 'black'
@@ -46,7 +48,8 @@ function paths(
             />
           )
         ],
-        current: []
+        current: [],
+        past: state.current
       })
     case CLEAR_PATH:
       return Object.assign({}, state, {
@@ -58,8 +61,28 @@ function paths(
   }
 }
 
+
+function image(
+  state = {
+    session: '',
+    size: [],
+    strokeWidth: []
+  },
+  action)
+{
+  switch (action) {
+    case SET_SESSION:
+      return Object.assign({}, state, {
+        session: action.session
+      })
+    default:
+      return state
+  }
+}
+
 const doodlePaint = combineReducers({
-  paths
+  paths,
+  image
 })
 
 export default doodlePaint

@@ -18,7 +18,6 @@ export default class Canvas extends Component {
       currentPoints: [],
       reaction: new Reaction(),
     }
-    console.log(Dimensions.get('window').height)
     this._panResponder = PanResponder.create({
       onStartShouldSetPanResponder: (evt, gs) => true,
       onMoveShouldSetPanResponder: (evt, gs) => true,
@@ -48,14 +47,6 @@ export default class Canvas extends Component {
     const donePaths = this.state.donePaths;
 
     if (currentPoints.length > 0) {
-      // newPaths.push(
-      //   <Path
-      //     key={pathCount}
-      //     stroke="red"
-      //     d={reaction.pointsToSvg(currentPoints)}
-      //     fill="none"
-      //   />
-      // );
 
       const newPath = (
         <Path
